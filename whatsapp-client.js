@@ -1,5 +1,6 @@
 const { Client } = require('whatsapp-web.js');
 const qrcode = require('qrcode');
+const handleMessage = require('./messageHandler');
 
 function initializeWhatsAppClient(io) {
   console.log('Inicializando cliente WhatsApp...');
@@ -31,6 +32,14 @@ function initializeWhatsAppClient(io) {
   client.on('disconnected', () => {
     console.log('❌ Bot desconectado');
     io.emit('disconnected');
+  });
+
+  // Modifique este evento para lidar com mensagens
+  client.on('message', (msg) => {
+    console.log('Mensagem recebida:', msg.body);
+    handleMessage(client, msg).catch(error => {
+      console.error('Erro ao processar mensagem:', error);
+    });
   });
 
   // Inicializa o cliente
